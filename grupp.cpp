@@ -40,8 +40,9 @@ void menu() {
     cout << "1. Basic sort"      << endl;
     cout << "2. Bubble sort"     << endl;
     cout << "3. Cocktail sort"   << endl;
-    cout << "4. Tims bubble sort" << endl;
-    cout << "4. Quit"            << endl;
+    cout << "4. Tims bubble sort"<< endl;
+    cout << "5. Heap sort"       << endl;
+    cout << "6. Quit"            << endl;
     cout << "================\n" << "->";
 }
 
@@ -68,7 +69,7 @@ void timsBubbleSort(vector<int> array, int size) {
         unsorted = 0;
         for (int i = 0; i < size -1; i++) {
             if (array[i] > array[i+1]) {
-                swap(array[i], array[i+1]);
+                swap(&array[i], &array[i+1]);
                 unsorted = 1;
             }
         }
@@ -101,10 +102,42 @@ void cocktailSort(vector<int> array, int size) {
         }
         ++start;
     }
+    //cout << array[10] << array[100] << array[1000] << array[10000] << array[size] << endl;
 }
 
 void basicSort(vector<int>array, int size) {
     sort(array.begin(), array.end());
+}
+
+void heapify(vector<int>array, int n, int i)
+{
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+  
+    if (l < n && array[l] > array[largest])
+        largest = l;
+  
+    if (r < n && array[r] > array[largest])
+        largest = r;
+  
+    if (largest != i) {
+        swap(array[i], array[largest]);
+  
+        heapify(array, n, largest);
+    }
+}
+  
+void heapSort(vector<int>array, int n)
+{
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(array, n, i);
+  
+    for (int i = n - 1; i >= 0; i--) {
+        swap(array[0], array[i]);
+  
+        heapify(array, i, 0);
+    }
 }
 
 int main() {
@@ -145,6 +178,11 @@ int main() {
             t.getTime();
             break;
         case '5':
+            t.startCount();
+            heapSort(array, size);
+            t.getTime();
+            break;
+        case '6':
             return 0;
         default:
             cout << "Invalid input" << endl;
@@ -154,3 +192,9 @@ int main() {
     return 0;
 
 }
+
+
+
+
+
+

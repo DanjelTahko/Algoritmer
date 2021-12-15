@@ -37,16 +37,17 @@ class Time {
 
 void menu() {
 
-    cout << "===== MENU ====="    << endl;
-    cout << "1. Change array size"<< endl;
-    cout << "2. Basic sort"       << endl;  
-    cout << "3. Bubble sort"      << endl;
-    cout << "4. Cocktail sort"    << endl;
-    cout << "5. Tims bubble sort" << endl;
-    cout << "6. Heap sort"        << endl;
-    cout << "7. Quicksort"        << endl;
-    cout << "8. Quit"             << endl;
-    cout << "================\n"  << "->";
+    cout << "======== MENU ========" << endl;
+    cout << "1. Change array size"   << endl;
+    cout << "2. Create sorted array" << endl;
+    cout << "3. Bubble sort"         << endl;
+    cout << "4. Cocktail sort"       << endl;
+    cout << "5. Tims bubble sort"    << endl;
+    cout << "6. Heap sort"           << endl;
+    cout << "7. Quicksort"           << endl;
+    cout << "8. Check all "          << endl;
+    cout << "9. Quit"                << endl;
+    cout << "======================\n"     << "->";
 }
 
 void swap(int *xp, int *yp) {
@@ -151,6 +152,7 @@ int partition(vector<int>array, int low, int high) {
             swap(&array[i], &array[j]);
         }
     }
+    cout << array[i] << endl;
     swap(&array[i+1], &array[high]);
     return (i+1);
 }
@@ -172,6 +174,51 @@ vector<int> createArray(int input) {
     return array;
 }
 
+vector<int> createSortedArray(int input) {
+    vector<int> array;
+    for (int i = 0; i < input;i++) {
+        array.push_back(i);
+    }
+    return array;
+}
+
+void checkAll(Time t, vector<int> array, int size) {
+
+    t.startCount();
+    basicSort(array, size);
+    cout << "Basic sort =" << endl;
+    t.getTime();
+
+    t.startCount();
+    bubbleSort(array, size);
+    cout << "Bubble sort =" << endl;
+    t.getTime();
+
+    t.startCount();
+    cocktailSort(array, size);
+    cout << "Cocktail sort =" << endl;
+    t.getTime();
+
+    t.startCount();
+    timsBubbleSort(array, size);
+    cout << "Tims bubble sort =" << endl;
+    t.getTime();
+
+    t.startCount();
+    heapSort(array, size);
+    cout << "Heap sort =" << endl;
+    t.getTime();
+
+    int low = 0;
+    int high = size -1;
+    t.startCount();
+    quickSort(array, low, high);
+    cout << "Quicksort =" << endl;
+    t.getTime();
+}
+
+
+
 int main() {
 
     Time t;
@@ -187,15 +234,14 @@ int main() {
         cin >> choice;
         switch (choice) {
         case '1':
-            cout << "Choose array size:";
+            cout << "Choose array size: ";
             cin >> size;
             array = createArray(size);
             break;
         case '2':
-            t.startCount();
-            basicSort(array, size);
-            t.getTime();
-            cout << array.size() << endl;
+            cout << "Choose array size: ";
+            cin >> size;
+            array = createSortedArray(size);
             break;
         case '3':
             t.startCount();
@@ -224,6 +270,9 @@ int main() {
             t.getTime();
             break;
         case '8':
+            checkAll(t, array, size);
+            break;
+        case '9':
             return 0;
         default:
             cout << "Invalid input" << endl;

@@ -152,7 +152,6 @@ int partition(vector<int>array, int low, int high) {
             swap(&array[i], &array[j]);
         }
     }
-    cout << array[i] << endl;
     swap(&array[i+1], &array[high]);
     return (i+1);
 }

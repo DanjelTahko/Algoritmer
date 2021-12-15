@@ -145,7 +145,7 @@ int main() {
     Time t;
     vector<int> array;
 
-    for (int i = 0; i < 100000;i++) { // 100 tusen
+    for (int i = 0; i < 10000;i++) { // 100 tusen
         array.push_back((rand()%50)+1);
     }
 

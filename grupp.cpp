@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include <algorithm>
 #include <chrono>
+#include <span>
+#include <iterator>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 using namespace std::chrono;
 
@@ -35,20 +39,6 @@ class Time {
         }
 };
 
-void menu() {
-
-    cout << "======== MENU ========" << endl;
-    cout << "1. Change array size"   << endl;
-    cout << "2. Create sorted array" << endl;
-    cout << "3. Create ASA"          << endl;
-    cout << "4. Cocktail sort"       << endl;
-    cout << "5. Tims bubble sort"    << endl;
-    cout << "6. Heap sort"           << endl;
-    cout << "7. Quicksort"           << endl;
-    cout << "8. Check all "          << endl;
-    cout << "9. Quit"                << endl;
-    cout << "======================\n"     << "->";
-}
 
 void swap(int *xp, int *yp) {
 	int temp = *xp;
@@ -226,6 +216,90 @@ void mergeSort(vector<int>array, int const begin, int const end)
 	merge(array, begin, mid, end);
 }
 
+
+void
+insertionSort(span<int>arr)
+{
+	for (int i = 1; i < arr.size(); i++) {
+		if (arr[i] >= arr[i - 1]) continue;
+		int j = i - 1;
+		for (;;) {
+			if (j == 0) break;
+			if (arr[i] > arr[j-1]) break;
+			j--;
+		}
+		rotate(arr.begin()+j, arr.begin()+i, arr.begin()+i+1);
+	}
+}
+
+void
+merge2(span<int> inA, span<int> inB, span<int> out)
+{
+	int left = 0;
+	int right = 0;
+	int lw = inA.size();
+	int rw = inB.size();
+	int ow = out.size();
+//	printf("      lw = %d, rw = %d, ow = %d\n", lw, rw, ow);
+	for (int outidx = 0; outidx < ow; outidx++) {
+//		printf("         outidx = %d\n", outidx);
+//		printf("         left = %d\n", left);
+//		printf("         right = %d\n", right);
+		if (left < lw && (right >= rw || inA[left] <= inB[right])) {
+//			printf("            doing left\n");
+			out[outidx] = inA[left];
+//			printf("            out[outidx] = %d\n", out[outidx]);
+			left++;
+		} else {
+//			printf("            doing right\n");
+			out[outidx] = inB[right];
+//			printf("            out[outidx] = %d\n", out[outidx]);
+			right++;
+		}
+	}
+}
+
+void
+hybridMergeSort(span<int>in)
+{
+	int n = in.size();
+	auto A = in;
+	auto temp = new int[n];
+	auto B = span(temp, n);
+
+	int width = 8;
+	for (int i = 0; i < n; i += width) {
+		insertionSort(span(A).subspan(i, min(width, n - i)));
+	}
+
+	for (; width < n; width *= 2) {
+//		printf("width = %d\n", width);
+		for (int i = 0; i < n; i += 2*width) {
+//			printf("   i = %d\n", i);
+			int llen = min(width, n-i);
+			int rlen = max(0, min(width, n-(llen+i)));
+//			printf("   l = %d\n", llen);
+//			printf("   r = %d\n", rlen);
+			merge2(A.subspan(i, llen), A.subspan(i+llen, rlen),
+				B.subspan(i, llen+rlen));
+		}
+		auto foo = A;
+		A = B;
+		B = foo;
+	}
+	if (B.data() == in.data()) {
+		memcpy(in.data(), A.data(), in.size_bytes());
+	}
+	delete[] temp;
+}
+
+void
+hybridMergeSortWrap(vector<int> arr)
+{
+	hybridMergeSort(arr);
+}
+
+
 vector<int> createArray(int input) {
     vector<int> array;
     for (int i = 0; i < input;i++) {
@@ -263,19 +337,30 @@ void checkAll(Time t, vector<int> array, int size) {
     t.getTime();
 
     t.startCount();
-    bubbleSort(array, size);
-    cout << "Bubble sort =" << endl;
+    cout << "hybrid merge sort =" << endl;
+    hybridMergeSortWrap(array);
     t.getTime();
 
-    t.startCount();
-    cocktailSort(array, size);
-    cout << "Cocktail sort =" << endl;
-    t.getTime();
+    if (size <= 20000) {
+	t.startCount();
+	bubbleSort(array, size);
+	cout << "Bubble sort =" << endl;
+	t.getTime();
+    }
 
-    t.startCount();
-    timsBubbleSort(array, size);
-    cout << "Tims bubble sort =" << endl;
-    t.getTime();
+    if (size <= 20000) {
+	    t.startCount();
+	    cocktailSort(array, size);
+	    cout << "Cocktail sort =" << endl;
+	    t.getTime();
+    }
+
+    if (size <= 20000) {
+	    t.startCount();
+	    timsBubbleSort(array, size);
+	    cout << "Tims bubble sort =" << endl;
+	    t.getTime();
+    }
 
     t.startCount();
     heapSort(array, size);
@@ -299,15 +384,34 @@ void checkAll(Time t, vector<int> array, int size) {
 
 
 
+void menu() {
+    cout
+    << "======== MENU ========" << endl
+    << "1. Change array size"   << endl
+    << "2. Create sorted array" << endl
+    << "3. Create ASA"          << endl
+    << "4. Cocktail sort"       << endl
+    << "5. Tims bubble sort"    << endl
+    << "6. Heap sort"           << endl
+    << "7. Quicksort"           << endl
+    << "8. Check all "          << endl
+    << "9. Quit"                << endl
+    << "a. hybridMergeSort"	<< endl
+    << "b. c++ std::sort"	<< endl
+    << "======================\n"
+    << "-> ";
+}
+
 int main() {
 
     Time t;
-    vector<int>array;
+    vector<int> array;
     int size;
     string line;
     char choice;
     int low = 0;
     int high;
+
 
     while (1) {
         menu();
@@ -343,6 +447,16 @@ int main() {
             heapSort(array, size);
             t.getTime();
             break;
+	case 'a':
+	    t.startCount();
+	    hybridMergeSort(array);
+	    t.getTime();
+	    break;
+	case 'b':
+	    t.startCount();
+	    basicSort(array, size);
+	    t.getTime();
+	    break;
         case '7':
             high = size -1;
             t.startCount();

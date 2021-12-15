@@ -31,7 +31,7 @@ class Time {
             auto duration = duration_cast<milliseconds>(stop - start);
             milli = duration.count();
             seconds = duration.count() / 1000;
-            cout << "\n* " << seconds << " seconds (" << milli << " milliseconds)\n" << endl;
+            cout << seconds << " seconds (" << milli << " milliseconds)\n" << endl;
         }
 };
 
@@ -40,7 +40,7 @@ void menu() {
     cout << "======== MENU ========" << endl;
     cout << "1. Change array size"   << endl;
     cout << "2. Create sorted array" << endl;
-    cout << "3. Bubble sort"         << endl;
+    cout << "3. Create ASA"          << endl;
     cout << "4. Cocktail sort"       << endl;
     cout << "5. Tims bubble sort"    << endl;
     cout << "6. Heap sort"           << endl;
@@ -181,6 +181,19 @@ vector<int> createSortedArray(int input) {
     return array;
 }
 
+vector<int> almostSortedArray(int input) {
+    vector<int> array;
+    for (int i = 0; i < input;i++) {
+        array.push_back(i);
+    }
+
+    for (int j = 0; j < input;) {
+        array[j] = rand()%input;
+        j += 10;
+    }
+    return array;
+}
+
 void checkAll(Time t, vector<int> array, int size) {
 
     t.startCount();
@@ -243,9 +256,9 @@ int main() {
             array = createSortedArray(size);
             break;
         case '3':
-            t.startCount();
-            bubbleSort(array, size);
-            t.getTime();
+            cout << "Choose array size: ";
+            cin >> size;
+            array = almostSortedArray(size);
             break;
         case '4':
             t.startCount();

@@ -38,8 +38,8 @@ class Time {
 void menu() {
 
     cout << "===== MENU ====="    << endl;
-    cout << "1 Ändra storlek"     << endl;
-    cout << "2. Basic sort"       << endl;
+    cout << "1. Change array size"<< endl;
+    cout << "2. Basic sort"       << endl;  
     cout << "3. Bubble sort"      << endl;
     cout << "4. Cocktail sort"    << endl;
     cout << "5. Tims bubble sort" << endl;

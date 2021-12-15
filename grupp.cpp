@@ -11,6 +11,7 @@ using namespace std::chrono;
 class Time {
   
     public:
+
         std::chrono::time_point<std::chrono::high_resolution_clock> start;
         std::chrono::time_point<std::chrono::high_resolution_clock> stop;
 
@@ -36,13 +37,15 @@ class Time {
 
 void menu() {
 
-    cout << "===== MENU ====="   << endl;
-    cout << "1. Basic sort"      << endl;
-    cout << "2. Bubble sort"     << endl;
-    cout << "3. Cocktail sort"   << endl;
-    cout << "4. Tims bubble sort" << endl;
-    cout << "4. Quit"            << endl;
-    cout << "================\n" << "->";
+    cout << "===== MENU ====="    << endl;
+    cout << "1 Ändra storlek"     << endl;
+    cout << "2. Basic sort"       << endl;
+    cout << "3. Bubble sort"      << endl;
+    cout << "4. Cocktail sort"    << endl;
+    cout << "5. Tims bubble sort" << endl;
+    cout << "6. Quicksort"        << endl;
+    cout << "7. Quit"             << endl;
+    cout << "================\n"  << "->";
 }
 
 void swap(int *xp, int *yp) {
@@ -79,7 +82,6 @@ void cocktailSort(vector<int> array, int size) {
     bool swapped = true;
     int start = 0;
     int end = size -1;
-
     while (swapped) {
         swapped = false;
         for (int i = start; i < end; i++) {
@@ -107,44 +109,83 @@ void basicSort(vector<int>array, int size) {
     sort(array.begin(), array.end());
 }
 
+int partition(vector<int>array, int low, int high) {
+    int pivot = array[high];
+    int i = (low - 1);
+    for (int j = low; j <= high-1; j++) {
+        if (array[j] < pivot) {
+            i++;
+            swap(&array[i], &array[j]);
+        }
+    }
+    swap(&array[i+1], &array[high]);
+    return (i+1);
+}
+
+void quickSort(vector<int>array, int low, int high) {
+
+    if (low < high) {
+        int pi = partition(array, low, high);
+        quickSort(array, low, pi -1);
+        quickSort(array, pi+1, high);
+    }
+}
+
+vector<int> createArray(int input) {
+    vector<int> array;
+    for (int i = 0; i < input;i++) {
+        array.push_back((rand()%50)+1);
+    }
+    return array;
+}
+
 int main() {
 
     Time t;
-    vector<int> array;
-
-    for (int i = 0; i < 100000;i++) { // 100 tusen
-        array.push_back((rand()%50)+1);
-    }
-
-    int size = array.size();
+    vector<int>array;
+    int size;
     string line;
     char choice;
+    int low = 0;
+    int high;
 
     while (1) {
         menu();
         cin >> choice;
         switch (choice) {
         case '1':
+            cout << "Choose array size:";
+            cin >> size;
+            array = createArray(size);
+            break;
+        case '2':
             t.startCount();
             basicSort(array, size);
             t.getTime();
+            cout << array.size() << endl;
             break;
-        case '2':
+        case '3':
             t.startCount();
             bubbleSort(array, size);
             t.getTime();
             break;
-        case '3':
+        case '4':
             t.startCount();
             cocktailSort(array, size);
             t.getTime();
             break;
-        case '4':
+        case '5':
             t.startCount();
             timsBubbleSort(array, size);
             t.getTime();
             break;
-        case '5':
+        case '6':
+            high = size -1;
+            t.startCount();
+            quickSort(array, low, high);
+            t.getTime();
+            break;
+        case '7':
             return 0;
         default:
             cout << "Invalid input" << endl;
@@ -154,3 +195,10 @@ int main() {
     return 0;
 
 }
+
+/*
+for (int i = 0; i < size; i++) {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+*/

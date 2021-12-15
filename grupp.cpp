@@ -282,12 +282,14 @@ void checkAll(Time t, vector<int> array, int size) {
     cout << "Heap sort =" << endl;
     t.getTime();
 
+    /*
     int low = 0;
     int high = size -1;
     t.startCount();
     quickSort(array, low, high);
     cout << "Quicksort =" << endl;
     t.getTime();
+    */
 
     t.startCount();
     mergeSort(array, 0, size - 1);

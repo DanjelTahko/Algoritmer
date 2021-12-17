@@ -221,7 +221,7 @@ void mergeSort(vector<int> &array, int const begin, int const end)
 void
 insertionSort(span<int>arr)
 {
-	for (int i = 1; i < arr.size(); i++) {
+	for (int i = 1; i < (int)arr.size(); i++) {
 		if (arr[i] >= arr[i - 1]) continue;
 		int j = i - 1;
 		for (;;) {
@@ -320,7 +320,7 @@ class randStuff {
                 uid = uniform_int_distribution<>(1, max);
                 break;
             case BINOMIAL:
-                bd = binomial_distribution<>(0.5, max);
+                bd = binomial_distribution<>(max, 0.5);
                 break;
         }
     }
@@ -375,11 +375,12 @@ vector<int> reverseSortedArray(randStuff &r, int size) {
     return array;
 }
 
-void checkAll(Time t, vector<int> &array, int size) {
+void checkAll(Time t, vector<int> &array) {
+    int size = array.size();
     vector<int> tmp;
 
     tmp = array;
-    cout << "Basic sort = ";
+    cout << "std::sort sort = ";
     t.startCount();
     basicSort(tmp, size);
     t.getTime();
@@ -416,15 +417,15 @@ void checkAll(Time t, vector<int> &array, int size) {
         t.getTime();
     } else printf("skipping heap sort\n");
 
-    /*
-    int low = 0;
-    int high = size -1;
-    tmp = array;
-    t.startCount();
-    quickSort(tmp, low, high);
-    cout << "Quicksort =" << endl;
-    t.getTime();
-    */
+    if (size <= 2000000) {
+        int low = 0;
+        int high = size -1;
+        tmp = array;
+        t.startCount();
+        quickSort(tmp, low, high);
+        cout << "Quicksort =" << endl;
+        t.getTime();
+    } else printf("skipping quicksort\n");
 
     tmp = array;
     cout << "Merge sort = ";
@@ -458,6 +459,7 @@ void menu() {
     << "t. Tims bubble sort"    << endl
     << "h. Heap sort"           << endl
     << "q. Quicksort"           << endl
+    << "M. Recursive Merge Sort"	<< endl
     << "a. hybridMergeSort"	<< endl
     << "b. c++ std::sort"	<< endl
     << "======================\n"
@@ -516,33 +518,39 @@ int main() {
             array = almostSortedArray(rands, size);
             break;
         case '0':
-            checkAll(t, array, size);
+            checkAll(t, array);
             break;
         case '9':
             return 0;
         case 'c':
             tmp = array;
             t.startCount();
-            cocktailSort(tmp, size);
+            cocktailSort(tmp, tmp.size());
             t.getTime();
             break;
         case 't':
             tmp = array;
             t.startCount();
-            timsBubbleSort(tmp, size);
+            timsBubbleSort(tmp, tmp.size());
             t.getTime();
             break;
         case 'h':
             tmp = array;
             t.startCount();
-            heapSort(tmp, size);
+            heapSort(tmp, tmp.size());
             t.getTime();
             break;
         case 'q':
             tmp = array;
-            high = size -1;
+            high = tmp.size() -1;
             t.startCount();
             quickSort(tmp, low, high);
+            t.getTime();
+            break;
+        case 'M':
+            tmp = array;
+            t.startCount();
+            mergeSort(tmp, 0, tmp.size() - 1);
             t.getTime();
             break;
         case 'a':
@@ -554,7 +562,7 @@ int main() {
         case 'b':
             tmp = array;
             t.startCount();
-            basicSort(tmp, size);
+            basicSort(tmp, tmp.size());
             t.getTime();
             break;
         default:
